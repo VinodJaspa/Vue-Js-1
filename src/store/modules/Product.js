@@ -1,5 +1,7 @@
 // import { GET_ALL_PRODUCTS } from "./Types";
 import axios from 'axios';
+import IndexedDBService from './indexedDb';
+
 
 // initial state
 const state = () => ({
@@ -79,18 +81,22 @@ const actions = {
       });
   },
 
+ 
   async storeProduct({ commit }, product) {
     commit('setProductIsCreating', true);
-    await axios.post(`${process.env.VUE_APP_API_URL}products`, product)
-      .then(res => {
-        commit('saveNewProducts', res.data.data);
-        commit('setProductIsCreating', false);
-      }).catch(err => {
-        console.log('error', err);
-        commit('setProductIsCreating', false);
-      });
-  },
 
+    try {
+      // Save product in IndexedDB
+      await IndexedDBService.addData(product);
+
+      // Commit mutation to indicate successful creation
+      commit('saveNewProducts', product);
+      commit('setProductIsCreating', false);
+    } catch (error) {
+      console.error('Error saving product to IndexedDB:', error);
+      commit('setProductIsCreating', false);
+    }
+  },
   async updateProduct({ commit }, product) {
     commit('setProductIsUpdating', true);
     commit('setProductIsUpdating', true);
