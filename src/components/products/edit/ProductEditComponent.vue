@@ -152,10 +152,11 @@ export default {
     },
   },
 
-  created: function () {
-    this.id = this.$route.params.id;
-    this.fetchDetailProduct(this.id);
-  },
+  created: async function () {
+  this.id = this.$route.params.id;
+  await this.fetchDetailProduct(this.id);
+  console.log('Fetched product:', this.product);
+},
 
   methods: {
     ...mapActions([

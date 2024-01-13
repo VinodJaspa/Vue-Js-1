@@ -1,5 +1,5 @@
 
-import { createStore, createLogger } from 'vuex';
+import { createStore } from 'vuex';
 import product from './modules/Product';
 import auth from './modules/Auth';
 
@@ -11,7 +11,7 @@ const Store = createStore({
     product
   },
   strict: debug,
-  plugins: debug ? [createLogger()] : []
+  // plugins: debug ? [createLogger()] : []
 })
 
 export default Store;

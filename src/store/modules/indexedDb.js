@@ -49,18 +49,26 @@ export default class IndexedDBService {
       if (!this.db) {
         await this.openDatabase();
       }
+     
   
       return new Promise((resolve, reject) => {
-        const transaction = this.db.transaction([this.storeName], 'readonly');
+        const transaction = this.db.transaction([this.storeName], 'readwrite');
         const store = transaction.objectStore(this.storeName);
-        const request = store.get(id);
-  
+        const request = store.get(Number(id));
+     
         request.onsuccess = () => {
-          resolve(request.result);
+          const rawResult = request.result;
+          if (rawResult) {
+     
+            resolve(rawResult);
+          } else {
+            reject(new Error('Data not found'));
+          }
         };
   
         request.onerror = () => {
           reject(new Error('Error getting data'));
+          console.error('Error getting data:', event.target.error);
         };
       });
     }
@@ -69,23 +77,23 @@ export default class IndexedDBService {
       if (!this.db) {
         await this.openDatabase();
       }
-  
+    
       return new Promise((resolve, reject) => {
         const transaction = this.db.transaction([this.storeName], 'readwrite');
         const store = transaction.objectStore(this.storeName);
-        const getRequest = store.get(id);
-  
+        const getRequest = store.get(Number(id));
+    
         getRequest.onsuccess = () => {
           const existingData = getRequest.result;
-  
+    
           if (existingData) {
-            const updatedData = { ...existingData, ...newData };
-            const putRequest = store.put(updatedData);
-  
+            // Use the existingData.id as the key when putting the newData
+            const putRequest = store.put({ ...newData, id: existingData.id });
+    
             putRequest.onsuccess = () => {
               resolve();
             };
-  
+    
             putRequest.onerror = () => {
               reject(new Error('Error updating data'));
             };
@@ -93,22 +101,23 @@ export default class IndexedDBService {
             reject(new Error('Data not found'));
           }
         };
-  
+    
         getRequest.onerror = () => {
           reject(new Error('Error getting data'));
         };
       });
     }
+    
   
     async deleteData(id) {
       if (!this.db) {
         await this.openDatabase();
       }
-  
+
       return new Promise((resolve, reject) => {
         const transaction = this.db.transaction([this.storeName], 'readwrite');
         const store = transaction.objectStore(this.storeName);
-        const request = store.delete(id);
+        const request = store.delete(Number(id));
   
         request.onsuccess = () => {
           resolve();
@@ -119,5 +128,81 @@ export default class IndexedDBService {
         };
       });
     }
+    async getAllData() {
+      if (!this.db) {
+        await this.openDatabase();
+      }
+  
+      return new Promise((resolve, reject) => {
+        const transaction = this.db.transaction([this.storeName], 'readonly');
+        const store = transaction.objectStore(this.storeName);
+        const request = store.getAll();
+        request.onsuccess = () => {
+          const rawResult = request.result;
+          if (rawResult) {
+            const formattedData = {
+              data: {
+                ...rawResult
+              }
+            };
+            resolve(formattedData);
+          } else {
+            reject(new Error('Data not found'));
+          }
+        };
+  
+        request.onerror = () => {
+          reject(new Error('Error getting all data'));
+        };
+      });
+    }
+    
+// ... (previous code)
+
+async searchData(query) {
+  if (!this.db) {
+    await this.openDatabase();
+  }
+
+  return new Promise((resolve, reject) => {
+    const transaction = this.db.transaction([this.storeName], 'readonly');
+    const store = transaction.objectStore(this.storeName);
+console.log(query,"queryy");
+    const lowercasedQuery = query.search.toLowerCase();
+
+    const request = store.openCursor();
+
+    const results = [];
+
+    request.onsuccess = (event) => {
+      const cursor = event.target.result;
+      if (cursor) {
+        const item = cursor.value;
+
+        // Perform case-insensitive search on the desired field
+        const fieldValue = item.title.toLowerCase(); 
+        if (fieldValue.includes(lowercasedQuery)) {
+          
+          results.push(item);
+        }
+
+        cursor.continue();
+      } else {
+        const formattedData = {
+          data: {
+            ...results
+          }
+      }
+      resolve(formattedData);
+    }
+    };
+
+    request.onerror = () => {
+      reject(new Error('Error searching data'));
+    };
+  });
+}
+
+
   }
   

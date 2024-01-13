@@ -6,9 +6,9 @@
 }
 
 .dashboard-widget {
-    height: 100px;
+
     text-align: center;
-    padding: 20px;
+    padding: 10px;
 }
 
 .main-content {
@@ -87,3 +87,15 @@ a.router-link-active {
     background: transparent!important;
     border-bottom: 0px !important;
 }
+
+
+.swal2-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .swal2-popup {
+    max-width: 80%;
+  }
+  

@@ -5,7 +5,7 @@
         to="/"
         class="navbar-brand"
       >
-        # VueCRUD
+         Demo Vue App
       </router-link>
       <div class="navbar-nav mr-auto">
         <li class="nav-item">
@@ -25,24 +25,7 @@
             <i class="fa fa-plus-circle" /> Add
           </router-link>
         </li>
-        <li class="nav-item">
-          <router-link
-            to="/about"
-            class="nav-link"
-          >
-            <i class="fa fa-info-circle" />
-            About
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <router-link
-            to="/help"
-            class="nav-link"
-          >
-            <i class="fa fa-question-circle" />
-            Help
-          </router-link>
-        </li>
+        
       </div>
     </div>
   </nav>

@@ -16,7 +16,6 @@ import HeaderPartial from "./header/HeaderPartial";
 
 export default {
   name: "Layout",
-
   components: {
     HeaderPartial,
     FooterPartial,

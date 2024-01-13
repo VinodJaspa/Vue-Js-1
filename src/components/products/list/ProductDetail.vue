@@ -10,7 +10,7 @@
       <strong class="text-danger">{{ product.price }} $</strong>
     </div>
     <div class="col-3">
-      <span class="badge badge-info">{{ product.user.name }}</span>
+      <span class="">{{ product.description }}</span>
     </div>
     <div class="col-2">
       <router-link

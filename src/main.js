@@ -9,10 +9,14 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import "@hennge/vue3-pagination/dist/vue3-pagination.css";
 import "font-awesome/css/font-awesome.min.css";
 import "../node_modules/nprogress/nprogress.css";
-import "./store/axios.js";
+const options = {
+  position: "center",
+  timer: 1000,
+};
 
 const app = createApp(App);
-app.use(VueSweetalert2);
+app.use(VueSweetalert2, options);
+
 app.use(router);
 app.use(Store);
 app.config.devtools = true;

@@ -2,20 +2,27 @@
   <div class="container">
     <div class="row justify-content-center mt-2 mb-2">
       <div class="col-8">
-        <h4 class="text-left mb-2">All Products</h4>
+        <h4 class="text-left mb-2">
+          All Products
+        </h4>
       </div>
       <div class="col-4">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Search Products..."
-          @input="searchProducts"
-          v-model="query.search"
-        />
+        <div class="input-group">
+          <input
+            v-model="query.search"
+            type="search" 
+            class="form-control rounded"
+            placeholder="Search result by product name"
+        
+            aria-label="Search"
+          
+            aria-describedby="search-addon"
+          >
+        </div>
       </div>
     </div>
-    <div class="">
-      <div class="" v-if="!isLoading">
+    <div>
+      <div  v-if="!isLoading">
         <div class="row border-bottom border-top p-2 bg-light">
           <div class="col-1">Sl</div>
           <div class="col-3">Product Name</div>
@@ -24,7 +31,7 @@
           <div class="col-2">Actions</div>
         </div>
 
-        <div v-for="(item, index) in productsPaginatedData.data" :key="item.id">
+        <div v-for="(item, index) in productList.data" :key="item.id">
           <product-detail :index="index" :product="item" />
         </div>
       </div>
@@ -38,10 +45,13 @@
     </div>
 
     <!-- Insert Pagination Part -->
-    <div v-if="productsPaginatedData !== null" class="vertical-center mt-2 mb-5">
+    <div
+      v-if="productsPaginatedData !== null"
+      class="vertical-center mt-2 mb-5"
+    >
       <v-pagination
         v-model="query.page"
-        :pages="productsPaginatedData.pagination.total_pages"
+        :pages="productsPaginatedData.pagination?.total_pages"
         :range-size="2"
         active-color="#DCEDFF"
         @update:modelValue="getResults"
@@ -68,22 +78,31 @@ export default {
     ProductDetail,
     VPagination,
   },
-  computed: { ...mapGetters(["productList", "productsPaginatedData", "isLoading"]) },
-
-  methods: {
-    ...mapActions(["fetchAllProducts"]),
-
-    getResults() {
-      this.fetchAllProducts(this.query);
-    },
-
-    searchProducts() {
-      this.fetchAllProducts(this.query);
+  computed: {
+    ...mapGetters(["productList", "productsPaginatedData", "isLoading"]),
+  },
+  watch: {
+    'query.search'() {
+      // Trigger searchProducts when query.search changes
+      this.searchProducts(this.query);
     },
   },
-
   created() {
+    // Initial fetch on component creation
     this.fetchAllProducts(this.query);
   },
+
+  methods: {
+    ...mapActions(["fetchAllProducts","searchProducts"]),
+
+    async getResults() {
+      await this.fetchAllProducts(this.query);
+    },
+
+   
+
+  },
+
+
 };
 </script>
